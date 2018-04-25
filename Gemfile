@@ -24,7 +24,7 @@ gem 'annotate'
 # gem 'capistrano-rails', group: :development
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
-# gem 'rack-cors', '~>1.0.2'
+gem 'rack-cors', '~>1.0.2'
 
 gem 'jbuilder', '~> 2.5'
 
