@@ -14,7 +14,7 @@ class Api::UsersController < ApplicationController
     if @user
       render :show
     else
-      render :root
+      render json: {currentUser: null}
     end
   end
 
