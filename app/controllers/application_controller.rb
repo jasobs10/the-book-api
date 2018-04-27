@@ -3,23 +3,49 @@ class ApplicationController < ActionController::API
 
   # deprecated - use jwt token to find dis ish
   def current_user
-    debugger
-    @current_user ||= User.find_by(session_token: session[:session_token])
-    @current_user ? @current_user : nil
+    # debugger
+    # decoded_token = HashWithIndifferentAccess.new JWT.decode()
+    # decode token on user, and see if its there? need to save the token in singleton?
+    # token_payload = JWT.decode()
+    # @current_user ||= User.find_by(session_token: session[:session_token])
+    # @current_user ? @current_user : nil
+    @current_user
   end
 
   def log_in(user)
     debugger
-    session[:session_token] = user.session_token
+    payload = {
+      username: user.username,
+      exp: 24.hours.from_now.to_i
+    }
+    token = JWT.encode(payload, Rails.application.secrets.secret_key_base)
+    user.session_token = token
+    user.save!
+    # return jwt with user, save in local storage, send with every request. can save on user every time, so we can look it up
+
+    # session[:session_token] = user.session_token
   end
 
   def log_out
     debugger
-    current_user.reset_session_token
+    # current_user.reset_session_token
     session[:session_token] = nil
   end
 
+  def authenticate_request
+    # can skip_before_action
+    # use jwt token in header to set @current_user
+    headers = request.headers
+    jwtoken = headers['Authorization'].split(' ').last if headers['Authorization'].present?
+    decoded_token = HashWithIndifferentAccess.new JWT.decode(jwtoken, Rails.appication.secrets.secret_key_base)[0]
+    @current_user ||= User.find_by_username(decoded_token[:username])
+
+  end
+
   def require_logged_in
+    # use this as authenticate_request or call it
+    authenticate_request
+
     if !current_user
       render json: { base: ["You are not currently logged in"] }, status: 404
     end

@@ -18,10 +18,10 @@
 #
 
 class User < ApplicationRecord
-  validates :username, :email, :session_token, presence: true, uniqueness: true
+  validates :username, :email, presence: true, uniqueness: true
   validates :password_digest, presence: true
   validates :password, length: { minimum: 4, allow_nil: true }
-  after_initialize :ensure_session_token
+  # after_initialize :ensure_jwt
   attr_reader :password
 
   def self.find_by_credentials(username, password)
@@ -31,9 +31,15 @@ class User < ApplicationRecord
     nil
   end
 
-  def self.generate_session_token
-    SecureRandom.urlsafe_base64(16)
-  end
+  # def self.generate_jwt(username)
+  #   # generate jwt with 24 hour expiry limit, and username as lookups - should add email as well later
+  #   payload = {
+  #     username: username,
+  #     exp: 24.hours.from_now.to_i
+  #   }
+  #   JWT.encode(payload, Rails.application.secrets.secret_key_base)
+  #   debugger
+  # end
 
   def password=(password)
     @password = password
@@ -44,15 +50,16 @@ class User < ApplicationRecord
     BCrypt::Password.new(self.password_digest).is_password?(password)
   end
 
-  def reset_session_token
-    self.session_token = User.generate_session_token
-    self.save!
-    self.session_token
-  end
+  # def reset_session_token
+  #   self.session_token = User.generate_session_token
+  #   self.save!
+  #   self.session_token
+  # end
 
-  def ensure_session_token
-    self.session_token ||= User.generate_session_token
-  end
+  # def ensure_jwt
+  #   debugger
+  #   self.session_token ||= User.generate_jwt(self.username)
+  # end
 
 
 end

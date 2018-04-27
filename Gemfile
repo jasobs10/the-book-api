@@ -20,6 +20,8 @@ gem 'puma', '~> 3.0'
 gem 'bcrypt', '~> 3.1.7'
 gem 'annotate'
 
+gem 'simple_command'
+
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
