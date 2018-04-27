@@ -3,8 +3,7 @@ class Api::UsersController < ApplicationController
     debugger
     @user = User.new(user_params)
     debugger
-    if @user.save
-      log_in(@user)
+    if @user.save && log_in(@user)
       render :show
     else
       render json: @user.errors, status: 404
