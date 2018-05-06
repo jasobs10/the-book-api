@@ -4,23 +4,17 @@ class ApplicationController < ActionController::API
   # deprecated - use jwt token to find dis ish
   def current_user
     authenticate_request unless @current_user
-    # debugger
-    # decoded_token = HashWithIndifferentAccess.new JWT.decode()
-    # decode token on user, and see if its there? need to save the token in singleton?
-    # token_payload = JWT.decode()
-    # @current_user ||= User.find_by(session_token: session[:session_token])
-    # @current_user ? @current_user : nil
     @current_user
   end
 
   def log_in(user)
-    debugger
     payload = {
       username: user.username,
-      exp: 24.hours.from_now.to_i
+      exp: 25.hours.from_now.to_i
     }
+
     token = JWT.encode(payload, Rails.application.secrets.secret_key_base)
-    user.session_token = token
+    user.session_token = {jwt: token, exp: 24.hours.from_now.to_i}.to_json
     if user.save!
       true
     else
@@ -33,13 +27,10 @@ class ApplicationController < ActionController::API
 
   def log_out
     # need to renew session token
-    debugger
     current_user.reset_session_token
-    session[:session_token] = nil
   end
 
   def authenticate_request
-    debugger
     # can skip_before_action
     # use jwt token in header to set @current_user
     headers = request.headers
