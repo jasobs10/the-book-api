@@ -19,6 +19,7 @@ gem 'puma', '~> 3.0'
 # Use ActiveModel has_secure_password
 gem 'bcrypt', '~> 3.1.7'
 gem 'annotate'
+gem 'figaro'
 
 gem 'simple_command'
 

@@ -2,6 +2,7 @@ class Api::UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     if @user.save && log_in(@user)
+      NotifierMailer.welcome(@user).deliver_now
       render :show
     else
       render json: @user.errors.messages, status: 405
