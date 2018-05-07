@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180427144301) do
+ActiveRecord::Schema.define(version: 20180507114249) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,6 +28,7 @@ ActiveRecord::Schema.define(version: 20180427144301) do
     t.string   "access_type",     default: "user"
     t.datetime "created_at",                       null: false
     t.datetime "updated_at",                       null: false
+    t.string   "temp_password"
     t.index ["email"], name: "index_users_on_email", using: :btree
     t.index ["session_token"], name: "index_users_on_session_token", using: :btree
     t.index ["username"], name: "index_users_on_username", using: :btree
