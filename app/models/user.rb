@@ -62,6 +62,7 @@ class User < ApplicationRecord
   end
 
   def is_temp_password?(temp_password)
+    return false unless self.temp_password
     BCrypt::Password.new(self.temp_password).is_password?(temp_password)
   end
 
