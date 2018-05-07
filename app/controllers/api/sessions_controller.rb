@@ -5,7 +5,7 @@ class Api::SessionsController < ApplicationController
     if @user && log_in(@user)
       render 'api/users/show'
     else
-      render json: { base: ["Invalid username/password"] }, status: 404
+      render json: { base: ["Invalid login credentials"] }, status: 404
     end
   end
 
