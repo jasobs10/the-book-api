@@ -20,6 +20,7 @@ gem 'puma', '~> 3.0'
 gem 'bcrypt', '~> 3.1.7'
 gem 'annotate'
 gem 'figaro'
+gem 'simple-password-gen'
 
 gem 'simple_command'
 

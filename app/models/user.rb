@@ -24,11 +24,12 @@ class User < ApplicationRecord
   validates :password, length: { minimum: 4, allow_nil: true }
   # after_initialize :ensure_jwt
   attr_reader :password
+  attr_reader :temp_pass
 
   def self.find_by_credentials(username_or_email, password)
     # ruby's method missing to generate this method
     user = User.find_by_username(username_or_email) || User.find_by_email(username_or_email)
-    return user if user && user.is_password?(password)
+    return user if user && (user.is_password?(password) || user.is_temp_password?(password))
     nil
   end
 
@@ -45,6 +46,23 @@ class User < ApplicationRecord
   def password=(password)
     @password = password
     self.password_digest = BCrypt::Password.create(password)
+  end
+
+  def generate_temp_password
+    @temp_pass = Password.pronounceable 8
+    self.temp_password = BCrypt::Password.create(@temp_pass)
+  end
+
+  def temp_password=(temp_password)
+    super(temp_password)
+  end
+
+  def temp_pass
+    @temp_pass
+  end
+
+  def is_temp_password?(temp_password)
+    BCrypt::Password.new(self.temp_password).is_password?(temp_password)
   end
 
   def is_password?(password)
