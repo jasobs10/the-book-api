@@ -18,7 +18,8 @@
 #
 
 class User < ApplicationRecord
-  validates :username, :email, presence: true, uniqueness: true
+  validates :username, presence: true, uniqueness: true
+  validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :password_digest, presence: true
   validates :password, length: { minimum: 4, allow_nil: true }
   # after_initialize :ensure_jwt
