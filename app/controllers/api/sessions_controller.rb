@@ -2,7 +2,9 @@ class Api::SessionsController < ApplicationController
   def create
     login_name = session_params[:username] || session_params[:email]
     @user = User.find_by_credentials(login_name, session_params[:password])
-    if @user && log_in(@user)
+    if @user && @user.temp_password || session_params[:temp]
+      render json: "temp login successful"
+    elsif @user && log_in(@user)
       render 'api/users/show'
     else
       render json: { base: ["Invalid login credentials"] }, status: 404
@@ -21,6 +23,6 @@ class Api::SessionsController < ApplicationController
 
   private
   def session_params
-    params.require(:user).permit(:password, :username, :email)
+    params.require(:user).permit(:password, :username, :email, :temp)
   end
 end

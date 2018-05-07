@@ -19,23 +19,37 @@ class Api::UsersController < ApplicationController
   end
 
   def update
-    if current_user.id == params[:id].to_i
-      @user = User.find(params[:id])
-      @user.update(user_params)
-
-      if @user.save
-        render :show
+    # move to service
+    if user_params[:password]
+      login_name = user_params[:username]
+      @user = User.find_by_credentials(login_name, user_params[:temp_password])
+      if @user
+        @user.password = user_params[:password]
+        @user.temp_password = nil
+        if @user.save && log_in(@user)
+          render :show
+        end
       else
-        render json: @user.errors, status: 404
-
+        render json: {base: "Invalid credentials"}
       end
-    else
-      render json: {base: ["You cannot edit this account"]}, status: 404
     end
+    # if current_user.id == params[:id].to_i
+    #   @user = User.find(params[:id])
+    #   @user.update(user_params)
+    #
+    #   if @user.save
+    #     render :show
+    #   else
+    #     render json: @user.errors, status: 404
+    #
+    #   end
+    # else
+    #   render json: {base: ["You cannot edit this account"]}, status: 404
+    # end
   end
 
   private
   def user_params
-    params.require(:user).permit(:password, :username, :f_name, :l_name, :motto, :email)
+    params.require(:user).permit(:password, :username, :f_name, :l_name, :motto, :email, :temp_password)
   end
 end
