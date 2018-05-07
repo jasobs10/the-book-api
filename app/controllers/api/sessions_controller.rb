@@ -1,6 +1,7 @@
 class Api::SessionsController < ApplicationController
   def create
-    @user = User.find_by_credentials(params[:user][:username], params[:user][:password])
+    login_name = session_params[:username] || session_params[:email]
+    @user = User.find_by_credentials(login_name, session_params[:password])
     if @user && log_in(@user)
       render 'api/users/show'
     else
@@ -16,5 +17,10 @@ class Api::SessionsController < ApplicationController
     else
       render json: { base: ["Can't log out when not logged in"] }, status: 404
     end
+  end
+
+  private
+  def session_params
+    params.require(:user).permit(:password, :username, :email)
   end
 end

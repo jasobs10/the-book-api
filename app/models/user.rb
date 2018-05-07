@@ -25,9 +25,9 @@ class User < ApplicationRecord
   # after_initialize :ensure_jwt
   attr_reader :password
 
-  def self.find_by_credentials(username, password)
+  def self.find_by_credentials(username_or_email, password)
     # ruby's method missing to generate this method
-    user = User.find_by_username(username)
+    user = User.find_by_username(username_or_email) || User.find_by_email(username_or_email)
     return user if user && user.is_password?(password)
     nil
   end
